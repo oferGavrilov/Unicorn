@@ -10,7 +10,6 @@ from config import MONGO_URI, DB_NAME, COLLECTION_NAME, SLEEP_INTERVAL
 logger = logging.getLogger(__name__)
 
 def scrape(platform_name, platform_url):
-    # Initialize MongoDB collection
     client = MongoClient(MONGO_URI)
     db = client[DB_NAME]
     job_collection = db[COLLECTION_NAME]
@@ -63,5 +62,4 @@ def scrape(platform_name, platform_url):
             logger.error(f'Error scraping {next_page_url}: {e}')
             break
 
-    # Close MongoDB connection
     client.close()

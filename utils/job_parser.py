@@ -50,14 +50,22 @@ def classify_job_position(title, description):
         return 'C++'
     elif 'java' in title or 'java' in description:
         return 'Backend'
-    elif '.net' in title or '.net' in description:
+    elif 'net' in title or 'net' in description:
         return 'Backend'
     elif 'ארכיטקט/ית' in title or 'ארכיטקט/ית' in description:
         return 'Architect'
-    elif 'מפתח/ת crm' in title or 'מפתח/ת crm' in description:
+    elif 'crm' in title or 'crm' in description:
         return 'CRM Developer'
+    elif 'sap' in title or 'sap' in description:
+        return 'SAP Developer'
+    elif 'gis' in title or 'gis' in description:
+        return 'GIS Developer'
     elif 'cobol' in title or 'cobol' in description:
         return 'COBOL'
+    elif 'siebel' in title or 'siebel' in description:
+        return 'Siebel Developer'
+    elif 'scrum' in title or 'scrum' in description:
+        return 'Scrum Master'
     else:
         return 'Other'
 
@@ -65,9 +73,11 @@ def extract_requirements(requirements_text):
     requirements = []
 
     skills_list = [
+        'Frontend', 'Backend', 'Fullstack', 'Software Developer', 'Software Engineer', 'Team Leader', 'Tech Lead',
+        'צד לקוח', 'צד שרת', 'מפתח/ת תוכנה', 'מהנדס/ת תוכנה',
         'Python', 'Java', 'JavaScript', 'TypeScript', 'C#', 'C\\+\\+', 'SQL', 'Ruby', 'PHP',
         'React', 'Angular', 'Vue', '.NET', 'Spring Boot', 'Django', 'Flask', 'Node\\.js', 
-        'Microservices', 'Docker', 'Kubernetes', 'AWS', 'Azure', 'Agile', 'Spring'
+        'Microservices', 'Docker', 'Kubernetes', 'AWS', 'Azure', 'Agile', 'Spring', 'Cobol', 'Embedded', 'ABAP', 'Siebel', 'scrum'
     ]
 
     skills_pattern = '|'.join(skills_list)
