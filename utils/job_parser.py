@@ -1,24 +1,63 @@
+import os
 import re
 from datetime import datetime
 import logging
 
+def configure_failed_logger(platform_name):
+    os.makedirs('logs', exist_ok=True)
+
+    current_date = datetime.now().strftime('%d%m%y')
+    log_file_name = f'logs/failed-{platform_name}-{current_date}.log'
+
+    failed_logger = logging.getLogger('failed_jobs')
+    failed_logger.setLevel(logging.WARNING)
+
+    if failed_logger.hasHandlers():
+        failed_logger.handlers.clear()
+
+    failed_handler = logging.FileHandler(log_file_name, mode='a', encoding='utf-8')
+    failed_handler.setFormatter(logging.Formatter('%(asctime)s - %(message)s', datefmt='%d/%m/%Y %H:%M'))
+    failed_logger.addHandler(failed_handler)
+
+    return failed_logger
+
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def classify_job_position(title, description):
-    if 'full stack' in title.lower() or 'full stack' in description.lower():
+    title = title.lower()
+    description = description.lower()
+
+    if 'full stack' in title or 'full stack' in description:
         return 'Fullstack'
-    elif 'backend' in title.lower() or 'backend' in description.lower():
+    elif 'backend' in title or 'backend' in description:
         return 'Backend'
-    elif 'frontend' in title.lower() or 'frontend' in description.lower():
+    elif 'frontend' in title or 'frontend' in description:
         return 'Frontend'
     elif 'מפתח/ת תוכנה' in title or 'מפתח/ת תוכנה' in description:
         return 'Software Developer'
+    elif 'מהנדס/ת תוכנה' in title or 'מהנדס/ת תוכנה' in description:
+        return 'Software Engineer'
+    elif 'software engineer' in title or 'software developer' in title:
+        return 'Software Engineer'
     elif 'ראש צוות' in title or 'ראש צוות' in description:
         return 'Team Leader'
-    elif 'Embedded' in title or 'Embedded' in description:
+    elif 'tech lead' in title or 'tech lead' in description:
+        return 'Tech Lead'
+    elif 'embedded' in title or 'embedded' in description:
         return 'Embedded'
-    elif 'Java' in title or 'Java' in description:
-        return 'Java'
+    elif 'c++' in title or 'c++' in description:
+        return 'C++'
+    elif 'java' in title or 'java' in description:
+        return 'Backend'
+    elif '.net' in title or '.net' in description:
+        return 'Backend'
+    elif 'ארכיטקט/ית' in title or 'ארכיטקט/ית' in description:
+        return 'Architect'
+    elif 'מפתח/ת crm' in title or 'מפתח/ת crm' in description:
+        return 'CRM Developer'
+    elif 'cobol' in title or 'cobol' in description:
+        return 'COBOL'
     else:
         return 'Other'
 
@@ -72,7 +111,12 @@ def extract_requirements(requirements_text):
 
     return requirements
 
+def log_unclassified_or_empty_requirements(failed_logger, job_url, title, reason):
+    failed_logger.warning(f"{title} URL: {job_url} - Reason: {reason}")
+
 def parse_job_listing(job, platform_name):
+    failed_logger = configure_failed_logger(platform_name)
+
     try:
         title = job.find('h3').text.strip()
         job_url = job.find('a', href=True)['href']
@@ -89,6 +133,12 @@ def parse_job_listing(job, platform_name):
         job_id = job.find('section', class_='description number').text.split(':')[-1].strip()
         job_position = classify_job_position(title, description)
         job_requirements = extract_requirements(requirements_text)
+
+        if job_position == 'Other':
+            log_unclassified_or_empty_requirements(failed_logger, job_url, "Position", "Missing job position")
+
+        if not job_requirements:
+            log_unclassified_or_empty_requirements(failed_logger, job_url, "Requirements", "Empty requirements")
 
         return {
             'job_id': job_id,
