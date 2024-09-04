@@ -1,0 +1,41 @@
+/Unicorn/
+│
+├── app/
+│   ├── main.py
+│   ├── core/
+│   │   ├── config.py
+│   │   ├── security.py
+│   ├── db/
+│   │   ├── mongodb.py
+│   │   ├── postgresql.py
+│   │   └── models.py
+│   ├── api/
+│   │   ├── v1/
+│   │   │   ├── routes/
+│   │   │   │   ├── jobs.py
+│   │   │   │   ├── users.py
+│   │   │   │   └── auth.py
+│   │   │   └── dependencies/
+│   │   │       ├── db.py
+│   │   │       └── security.py
+│   ├── services/
+│   │   ├── job_service.py
+│   │   └── user_service.py
+│   ├── schemas/
+│   │   ├── job.py
+│   │   └── user.py
+│   ├── utils/
+│   │   ├── logger.py
+│   │   └── helpers.py
+│   ├── tests/
+│   │   ├── test_jobs.py
+│   │   └── test_users.py
+│   └── logs/
+│       └── failed/
+│
+├── .env
+├── .env.example
+├── .gitignore
+├── Dockerfile
+├── docker-compose.yml
+└── requirements.txt
